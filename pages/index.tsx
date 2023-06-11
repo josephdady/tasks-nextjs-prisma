@@ -7,9 +7,9 @@ import Container from "@mui/material/Container";
 import Task, { ITask } from "../src/components/Task";
 import Header from "../src/components/Header";
 import NewTask from "../src/components/NewTask";
-// import { User } from "@prisma/client";
 import { addRelatedTask, addTask, getTask } from "../src/services";
 import Loading from "../src/components/Loading";
+import { User } from "../src/types";
 //
 export const getStaticProps: GetStaticProps = async () => {
   const task = await prisma.task.findMany({
@@ -32,7 +32,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
 type Props = {
   tasks: ITaskCard[];
-  assignees: any[];
+  assignees: User[];
 };
 
 const Home: FC<Props> = ({ tasks, assignees }) => {

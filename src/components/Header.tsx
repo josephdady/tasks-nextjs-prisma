@@ -1,8 +1,8 @@
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { User } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
+import { User } from "../types";
 
 type Props = {
   handleNewTask: () => void;

@@ -14,12 +14,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Status, User } from "@prisma/client";
+import { Status } from "@prisma/client";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import DefaultIcon from "../../public/icon-plus.svg";
 import { ITask } from "./Task";
 import TaskCard, { ITaskCard } from "./TaskCard";
+import { User } from "../types";
 
 type Props = {
   assigness: User[];
