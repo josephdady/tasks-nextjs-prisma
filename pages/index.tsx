@@ -8,7 +8,7 @@ import Task, { ITask } from "../src/components/Task";
 import Header from "../src/components/Header";
 import NewTask from "../src/components/NewTask";
 import { User } from "@prisma/client";
-import { addRelatedTask, addTask, getTask, setWatcher } from "../src/services";
+import { addRelatedTask, addTask, getTask } from "../src/services";
 import Loading from "../src/components/Loading";
 
 export const getStaticProps: GetStaticProps = async () => {
