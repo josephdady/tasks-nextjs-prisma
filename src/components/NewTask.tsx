@@ -1,4 +1,3 @@
-import AddIcon from "@mui/icons-material/Add";
 import {
   Box,
   Button,
@@ -14,13 +13,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Status } from "@prisma/client";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import DefaultIcon from "../../public/icon-plus.svg";
+import { User } from "../types";
 import { ITask } from "./Task";
 import TaskCard, { ITaskCard } from "./TaskCard";
-import { User } from "../types";
+import { Status } from "../enums/status";
 
 type Props = {
   assigness: User[];
@@ -226,18 +225,6 @@ const NewTask: FC<Props> = ({
                   );
                 })}
               </Box>
-              {/* <Button
-                  disabled={relatedList.length == 0}
-                  variant="text"
-                  sx={{
-                    color: "text.primary",
-                    textTransform: "none",
-                  }}
-                  startIcon={<AddIcon />}
-                  onClick={() => setRelatedOpen(true)}
-                >
-                  Link to other tasks
-                </Button> */}
             </>
           )}
         </DialogContent>
