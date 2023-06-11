@@ -1,0 +1,84 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
+}
+
+// model Task {
+//   id          String    @id @default(uuid())
+//   createdAt   DateTime  @default(now())
+//   title       String
+//   description String?
+//   status      Status    @default(OPEN)
+
+//   viewers Watcher[]
+
+//   // assignee    Assignee? @relation(fields: [assigneeId], references: [id])
+//   // assigneeId  String?
+//   // watchers    Watcher[]
+
+//   // relatedTasks Task[] @relation("RelatedTasks")
+//   // relatedTo    Task[] @relation("RelatedTasks")
+// }
+
+// model Watcher {
+//   // id         String    @id @default(uuid())
+//   // task       Task?     @relation(fields: [taskId], references: [id])
+//   // assignee   Assignee? @relation(fields: [assigneeId], references: [id])
+//   // taskId     String?
+//   // assigneeId String?
+
+//   id       String      @id @default(uuid())
+//   name     String
+//   assignee Assignee?
+//   task     Task     @relation(fields: [taskId], references: [id])
+//   taskId   Int
+// }
+
+// model Assignee {
+//   id        String    @id @default(uuid())
+//   createdAt DateTime  @default(now())
+//   name      String    @unique
+//   avatar    String?   @default("https://ui-avatars.com/api/?name=John+Doe")
+
+//   viewer   Watcher?
+//   // assignTo  Task[]
+//   // tasks     Watcher[]
+// }
+
+model Task {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  title       String
+  description String?
+  status      Status   @default(OPEN)
+
+  relatedTasks Task[] @relation("RelatedTasks")
+  relatedTo    Task[] @relation("RelatedTasks")
+
+  assignee   User?   @relation(fields: [assigneeId], references: [id])
+  assigneeId String?
+
+  viewers User[] @relation("Viewers")
+}
+
+model User {
+  id     String  @id @default(uuid())
+  name   String
+  avatar String? @default("https://ui-avatars.com/api/?name=John+Doe")
+
+  assignTo Task[]
+  viewing  Task[] @relation("Viewers")
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  DONE
+}

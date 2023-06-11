@@ -1,60 +1,122 @@
-import React from "react"
-import { GetStaticProps } from "next"
-import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
+import { FC, useState } from "react";
+import { GetStaticProps } from "next";
+import prisma from "../src/lib/prisma";
+import TaskCard, { ITaskCard } from "../src/components/TaskCard";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Task, { ITask } from "../src/components/Task";
+import Header from "../src/components/Header";
+import NewTask from "../src/components/NewTask";
+import { User } from "@prisma/client";
+import { addRelatedTask, addTask, getTask, setWatcher } from "../src/services";
+import Loading from "../src/components/Loading";
 
 export const getStaticProps: GetStaticProps = async () => {
-  const feed = [
-    {
-      id: "1",
-      title: "Prisma is the perfect ORM for Next.js",
-      content: "[Prisma](https://github.com/prisma/prisma) and Next.js go _great_ together!",
-      published: false,
-      author: {
-        name: "Nikolas Burk",
-        email: "burk@prisma.io",
+  const task = await prisma.task.findMany({
+    include: {
+      assignee: {
+        select: { name: true, avatar: true },
       },
     },
-  ]
-  return { 
-    props: { feed }, 
-    revalidate: 10 
-  }
-}
+  });
+  const assignees = await prisma.user.findMany();
+
+  return {
+    props: {
+      tasks: JSON.parse(JSON.stringify(task)),
+      assignees: JSON.parse(JSON.stringify(assignees)),
+    },
+    revalidate: 10,
+  };
+};
 
 type Props = {
-  feed: PostProps[]
-}
+  tasks: ITaskCard[];
+  assignees: User[];
+};
 
-const Blog: React.FC<Props> = (props) => {
+const Home: FC<Props> = ({ tasks, assignees }) => {
+  const [task, setTask] = useState<ITask>(null);
+  const [taskOpen, setTaskOpen] = useState(false);
+  const [newTaskOpen, setNewTaskOpen] = useState(false);
+  const [taskLoading, setTaskLoading] = useState(false);
+  const [relatedLoading, setRelatedLoading] = useState(false);
+  const [newTaskLoading, setNewTaskLoading] = useState(false);
+
+  // New task handlers
+  const handleNewTaskOpen = () => {
+    setNewTaskOpen(true);
+  };
+  const handleNewTaskClose = () => {
+    setNewTaskOpen(false);
+  };
+  const handleAddTask = async (payload: ITask) => {
+    setNewTaskLoading(true);
+    setNewTaskOpen(false);
+    const task = await addTask(payload);
+    tasks.push(task);
+    setNewTaskLoading(false);
+  };
+
+  // Handle getting task
+  const handleTaskClick = async (id: string) => {
+    setTaskOpen(true);
+    setTaskLoading(true);
+    const task = await getTask(id);
+
+    setTaskLoading(false);
+    setTask(task);
+  };
+  const handleTaskClose = () => {
+    setTaskOpen(false);
+    setTask(null);
+  };
+
+  // Related task handler
+  const handleAddRelated = async (relatedIds: { id: string }[], id: string) => {
+    try {
+      setRelatedLoading(true);
+      const task = await addRelatedTask(relatedIds, id);
+      setTask(task);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setRelatedLoading(false);
+    }
+  };
+
   return (
-    <Layout>
-      <div className="page">
-        <h1>Public Feed</h1>
-        <main>
-          {props.feed.map((post) => (
-            <div key={post.id} className="post">
-              <Post post={post} />
-            </div>
-          ))}
-        </main>
-      </div>
-      <style jsx>{`
-        .post {
-          background: white;
-          transition: box-shadow 0.1s ease-in;
-        }
+    <Container maxWidth="sm">
+      <Box mt={13}>
+        <Header handleNewTask={handleNewTaskOpen} assignees={assignees} />
+        {newTaskLoading && <Loading />}
+        {!newTaskLoading &&
+          tasks.map((task) => {
+            return (
+              <TaskCard task={task} key={task.id} onClick={handleTaskClick} />
+            );
+          })}
+        {taskOpen && (
+          <Task
+            task={task}
+            relatedList={tasks}
+            open={taskOpen}
+            taskLoading={taskLoading}
+            relatedLoading={relatedLoading}
+            handleClose={handleTaskClose}
+            sendRelated={handleAddRelated}
+          />
+        )}
+        <NewTask
+          relatedList={tasks}
+          open={newTaskOpen}
+          handleClose={handleNewTaskClose}
+          assigness={assignees}
+          handleTask={handleAddTask}
+        />
+      </Box>
+    </Container>
+  );
+};
 
-        .post:hover {
-          box-shadow: 1px 1px 3px #aaa;
-        }
-
-        .post + .post {
-          margin-top: 2rem;
-        }
-      `}</style>
-    </Layout>
-  )
-}
-
-export default Blog
+export default Home;
