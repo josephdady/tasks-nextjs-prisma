@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import { Status } from "../enums/status";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import DefaultIcon from "../../public/icon.svg";
-import { Assignee } from "@prisma/client";
+import { User } from "@prisma/client";
 import { ITask } from "./Task";
 
 export interface ITaskCard {
@@ -14,7 +14,7 @@ export interface ITaskCard {
   createdAt: Date;
   title: string;
   status: Status;
-  assignee: Assignee;
+  assignee: User;
 }
 
 type Props = {
