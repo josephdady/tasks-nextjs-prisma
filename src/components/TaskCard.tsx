@@ -6,8 +6,8 @@ import Box from "@mui/material/Box";
 import { Status } from "../enums/status";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import DefaultIcon from "../../public/icon.svg";
-import { User } from "@prisma/client";
 import { ITask } from "./Task";
+import { User } from "../types";
 
 export interface ITaskCard {
   id: string;

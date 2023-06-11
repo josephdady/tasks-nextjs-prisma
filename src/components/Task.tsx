@@ -13,14 +13,14 @@ import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
-import { User, Status } from "@prisma/client";
 import Image from "next/image";
 import DefaultIcon from "../../public/icon-plus.svg";
-import { Status as StatusEnum } from "../enums/status";
+import { Status, Status as StatusEnum } from "../enums/status";
 import AddRelated from "./AddRelated";
 import TaskCard, { ITaskCard } from "./TaskCard";
 import Loading from "./Loading";
 import { setWatcher } from "../services";
+import { User } from "../types";
 
 export interface ITask {
   id?: string;
