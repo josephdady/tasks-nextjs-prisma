@@ -10,7 +10,7 @@ import NewTask from "../src/components/NewTask";
 // import { User } from "@prisma/client";
 import { addRelatedTask, addTask, getTask } from "../src/services";
 import Loading from "../src/components/Loading";
-
+//
 export const getStaticProps: GetStaticProps = async () => {
   const task = await prisma.task.findMany({
     include: {
