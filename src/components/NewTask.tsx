@@ -225,7 +225,7 @@ const NewTask: FC<Props> = ({
                   );
                 })}
               </Box>
-            </>
+            </> //
           )}
         </DialogContent>
         <DialogActions>
