@@ -14,7 +14,7 @@ import Divider from "@mui/material/Divider";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
-import DefaultIcon from "../../public/icon-plus.svg";
+import DefaultIcon from "/public/icon-plus.svg";
 import { Status, Status as StatusEnum } from "../enums/status";
 import AddRelated from "./AddRelated";
 import TaskCard, { ITaskCard } from "./TaskCard";
