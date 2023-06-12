@@ -15,25 +15,13 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import DefaultIcon from "../asstes/icon-plus.svg";
-import { Status, Status as StatusEnum } from "../enums/status";
+import { Status as StatusEnum } from "../enums/status";
 import AddRelated from "./AddRelated";
-import TaskCard, { ITaskCard } from "./TaskCard";
+import TaskCard from "./TaskCard";
 import Loading from "./Loading";
 import { setWatcher } from "../services";
-import { User } from "../types";
-//
-
-export interface ITask {
-  id?: string;
-  createdAt?: string;
-  title?: string;
-  description?: string;
-  status?: Status;
-  relatedTo?: ITask[];
-  assignee?: User;
-  assigneeId?: string;
-  viewers?: User[];
-}
+import { ITask, ITaskCard, User } from "../types";
+import Viewers from "./Viewers";
 
 type Props = {
   task: ITask;
@@ -56,6 +44,7 @@ const Task: React.FC<Props> = ({
 }) => {
   const [tabValue, setTabValue] = useState("1");
   const [relatedOpen, setRelatedOpen] = useState(false);
+  const [viewers, setViewers] = useState<User[]>(task?.viewers || []);
 
   const handleTabChange = (_, newValue: string) => {
     setTabValue(newValue);
@@ -70,19 +59,18 @@ const Task: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (task?.viewers) {
+    if (task) {
       handleSetWatcher();
     }
   }, [task]);
 
   const handleSetWatcher = async () => {
-    const viewers = task.viewers.map((viewer) => viewer.id) as string[];
-
+    const viewerIds = viewers.map((viewer) => viewer.id) as string[];
     const loggedUser = localStorage.getItem("loggedUser");
-    if (!viewers.includes(loggedUser)) {
+
+    if (!viewerIds.includes(loggedUser) || viewerIds.length === 0) {
       const { viewers } = await setWatcher(loggedUser, task.id);
-      console.log("viewers", viewers);
-      task.viewers = viewers;
+      setViewers(viewers);
     }
   };
   const styles = {
@@ -265,32 +253,7 @@ const Task: React.FC<Props> = ({
                   </Button>
                 </TabPanel>
                 <TabPanel value="2">
-                  {task.viewers?.map((viewer) => (
-                    <Box
-                      key={viewer.id}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        mb: 2,
-                      }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                        }}
-                        src={viewer.avatar}
-                      />
-                      <Typography
-                        variant="body2"
-                        component={"span"}
-                        fontWeight={500}
-                      >
-                        {viewer.name}
-                      </Typography>
-                    </Box>
-                  ))}
+                  <Viewers viewers={viewers} />
                 </TabPanel>
               </TabContext>
             </Box>

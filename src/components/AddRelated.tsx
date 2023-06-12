@@ -2,8 +2,8 @@ import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import { Button, Checkbox, DialogActions, DialogContent } from "@mui/material";
 import { useState } from "react";
-import { ITask } from "./Task";
-import TaskCard, { ITaskCard } from "./TaskCard";
+import { ITask, ITaskCard } from "../types";
+import TaskCard from "./TaskCard";
 
 type Props = {
   task: ITask;

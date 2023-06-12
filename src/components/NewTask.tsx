@@ -16,9 +16,8 @@ import {
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import DefaultIcon from "../asstes/icon-plus.svg";
-import { User } from "../types";
-import { ITask } from "./Task";
-import TaskCard, { ITaskCard } from "./TaskCard";
+import { ITask, ITaskCard, User } from "../types";
+import TaskCard from "./TaskCard";
 import { Status } from "../enums/status";
 
 type Props = {
@@ -36,19 +35,22 @@ const NewTask: FC<Props> = ({
   assigness,
   relatedList,
 }) => {
-  const [step, setStep] = useState(1);
-  const [errors, setErrors] = useState(null);
-  const statusList = Object.values(Status);
-  const [newRelated, setNewRelated] = useState<ITaskCard[]>([]);
-  const [formState, setFormState] = useState<ITask>({
+  const defaultTask: Pick<
+    ITask,
+    "status" | "title" | "description" | "assigneeId" | "relatedTo"
+  > = {
+    status: Status.OPEN,
     title: "",
     description: "",
     assigneeId: "",
-    status: Status.OPEN,
     relatedTo: [],
-    viewers: [],
-  });
+  };
+  const [step, setStep] = useState(1);
   const [submitStep1, setSubmitStep1] = useState(false);
+  const statusList = Object.values(Status);
+  const [formState, setFormState] = useState<ITask>({
+    ...defaultTask,
+  });
 
   const styles = {
     paper: {
@@ -67,15 +69,25 @@ const NewTask: FC<Props> = ({
     },
   };
 
+  useEffect(() => {
+    console.log("formState", formState);
+  }, [formState]);
+
   const handleFormState = (field, value) => {
     setFormState({ ...formState, [field]: value });
   };
 
   const handleRelatedClick = (e, id) => {
     if (e.target.checked) {
-      setNewRelated([...newRelated, id]);
+      let relatedTo = formState?.relatedTo || [];
+      relatedTo.push(id);
+      const newFormState = { ...formState, relatedTo };
+      setFormState(newFormState);
     } else {
-      setNewRelated(newRelated.filter((item) => item.id !== id));
+      handleFormState(
+        "relatedTo",
+        formState?.relatedTo.filter((item) => item !== id)
+      );
     }
   };
 
@@ -92,15 +104,13 @@ const NewTask: FC<Props> = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // add related to formState
-    handleFormState("relatedTo", newRelated);
     handleTask(formState);
   };
 
   useEffect(() => {
     if (!open) {
       setStep(1);
-      setFormState(null);
+      setFormState({ ...defaultTask });
     }
   }, [open]);
 
@@ -113,7 +123,6 @@ const NewTask: FC<Props> = ({
         maxWidth="sm"
         sx={styles.paper}
       >
-        {/* <Box component="form" onSubmit={handleSubmit}> */}
         <DialogContent>
           {step == 1 && (
             <>
@@ -127,12 +136,12 @@ const NewTask: FC<Props> = ({
                 <Box display={"flex"} width={"100%"} gap={4}>
                   <Box flex={1}>
                     <TextField
-                      error={!formState?.title && submitStep1}
+                      error={!formState.title && submitStep1}
                       onChange={(e) => handleFormState("title", e.target.value)}
                       label="Title"
                       variant="filled"
                       size="small"
-                      value={formState?.title}
+                      value={formState.title}
                     />
                     <Typography
                       mt={1}
@@ -151,7 +160,7 @@ const NewTask: FC<Props> = ({
                         variant="filled"
                         label="Assignee"
                         error={!formState?.assigneeId && submitStep1}
-                        value={formState?.assigneeId}
+                        value={formState.assigneeId}
                         onChange={(e) =>
                           handleFormState("assigneeId", e.target.value)
                         }
@@ -179,7 +188,7 @@ const NewTask: FC<Props> = ({
                     size="small"
                     multiline
                     rows={4}
-                    value={formState?.description}
+                    value={formState.description}
                     onChange={(e) =>
                       handleFormState("description", e.target.value)
                     }
@@ -197,7 +206,7 @@ const NewTask: FC<Props> = ({
                     size="small"
                     variant="filled"
                     label="Status"
-                    value={formState?.status}
+                    value={formState.status}
                     onChange={(e) => handleFormState("status", e.target.value)}
                   >
                     {statusList.map((status, index) => (

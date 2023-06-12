@@ -1,21 +1,12 @@
-import React from "react";
-import Image from "next/image";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import Box from "@mui/material/Box";
-import { Status } from "../enums/status";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import Image from "next/image";
+import React from "react";
 import DefaultIcon from "../asstes/icon-plus.svg";
-import { ITask } from "./Task";
-import { User } from "../types";
-
-export interface ITaskCard {
-  id: string;
-  createdAt: Date;
-  title: string;
-  status: Status;
-  assignee: User;
-}
+import { Status } from "../enums/status";
+import { ITask, ITaskCard } from "../types";
 
 type Props = {
   task: ITaskCard | ITask;

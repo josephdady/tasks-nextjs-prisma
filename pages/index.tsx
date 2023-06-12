@@ -1,16 +1,16 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { GetStaticProps } from "next";
 import prisma from "../src/lib/prisma";
-import TaskCard, { ITaskCard } from "../src/components/TaskCard";
+import TaskCard from "../src/components/TaskCard";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Task, { ITask } from "../src/components/Task";
+import Task from "../src/components/Task";
 import Header from "../src/components/Header";
 import NewTask from "../src/components/NewTask";
 import { addRelatedTask, addTask, getTask } from "../src/services";
 import Loading from "../src/components/Loading";
-import { User } from "../src/types";
-//
+import { ITask, ITaskCard, User } from "../src/types";
+
 export const getStaticProps: GetStaticProps = async () => {
   const task = await prisma.task.findMany({
     include: {
@@ -42,6 +42,12 @@ const Home: FC<Props> = ({ tasks, assignees }) => {
   const [taskLoading, setTaskLoading] = useState(false);
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [newTaskLoading, setNewTaskLoading] = useState(false);
+  const [taskList, setTaskList] = useState<ITaskCard[]>(tasks);
+
+  useEffect(() => {
+    if (!newTaskLoading) {
+    }
+  }, [newTaskLoading]);
 
   // New task handlers
   const handleNewTaskOpen = () => {
@@ -53,9 +59,14 @@ const Home: FC<Props> = ({ tasks, assignees }) => {
   const handleAddTask = async (payload: ITask) => {
     setNewTaskLoading(true);
     setNewTaskOpen(false);
-    const task = await addTask(payload);
-    tasks.push(task);
-    setNewTaskLoading(false);
+    try {
+      const task = await addTask(payload);
+      setTaskList([...taskList, task]);
+      setNewTaskLoading(false);
+    } catch (err) {
+      console.error(err);
+      setNewTaskLoading(false);
+    }
   };
 
   // Handle getting task
@@ -91,7 +102,7 @@ const Home: FC<Props> = ({ tasks, assignees }) => {
         <Header handleNewTask={handleNewTaskOpen} assignees={assignees} />
         {newTaskLoading && <Loading />}
         {!newTaskLoading &&
-          tasks.map((task) => {
+          taskList.map((task) => {
             return (
               <TaskCard task={task} key={task.id} onClick={handleTaskClick} />
             );

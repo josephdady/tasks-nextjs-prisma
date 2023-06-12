@@ -1,5 +1,4 @@
-import { log } from "console";
-import { ITask } from "../components/Task";
+import { ITask } from "../types";
 
 export async function getTask(id: string) {
   const res = await fetch(`api/task/${id}`);

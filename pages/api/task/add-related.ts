@@ -17,12 +17,12 @@ export default async function handler(
       },
       include: {
         assignee: true,
+        viewers: true,
         relatedTo: {
           include: {
             assignee: true,
           },
         },
-        viewers: true,
       },
     });
     res.status(200).json(task);
