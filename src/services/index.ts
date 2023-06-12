@@ -22,6 +22,7 @@ export async function addRelatedTask(
       headers: new Headers({
         "Content-Type": "application/json",
         Accept: "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
       }),
     }
   );
@@ -41,6 +42,7 @@ export async function getRelatedTasks(id: string[]) {
       headers: new Headers({
         "Content-Type": "application/json",
         Accept: "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
       }),
     }
   );
@@ -58,6 +60,7 @@ export async function addTask(task: ITask) {
     headers: new Headers({
       "Content-Type": "application/json",
       Accept: "application/json",
+      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
     }),
   });
 
@@ -75,6 +78,7 @@ export async function setWatcher(watcherId: string, taskId: string) {
       headers: new Headers({
         "Content-Type": "application/json",
         Accept: "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
       }),
     }
   );
