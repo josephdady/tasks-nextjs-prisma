@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
-import DefaultIcon from "/public/icon-plus.svg";
+import DefaultIcon from "../asstes/icon-plus.svg";
 import { User } from "../types";
 import { ITask } from "./Task";
 import TaskCard, { ITaskCard } from "./TaskCard";
